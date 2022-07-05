@@ -90,7 +90,7 @@ function renderListOfBrewery(){
     let ulEl = document.createElement('ul')
     ulEl.classList.add('breweries-list')
 
-    fetch(`https://api.openbrewerydb.org/breweries`, {
+    fetch(`https://api.openbrewerydb.org/breweries?by_state=${state.USState}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -161,8 +161,7 @@ function getBreweries() {
     }
 
 function render(){
-
-        document.textContent = ''
+        document.body.innerHTML = ""
         
         renderSearchBar()
         renderListOfBrewery()
