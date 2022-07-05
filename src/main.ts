@@ -45,11 +45,11 @@ const breweries: Brewery[] = [
   ]
 
 type State = {
-  UsState: string,
+  USState: string,
   breweries: Brewery[]
 }
 
-let state = {
+let state: State = {
         USState: '',
         breweries: []
     }
@@ -69,7 +69,7 @@ function renderSearchBar(){
         searchForm.autocomplete = 'off'
 
         let searchLabel = document.createElement('label')
-        searchLabel.for = 'search-breweries'
+        searchLabel.htmlFor = 'search-breweries'
         searchLabel.textContent = 'Search breweries:'
 
         let searchInput = document.createElement('input')
@@ -95,7 +95,6 @@ function renderListOfBrewery(){
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(state)
     }).then(response => response.json())
     .then(data => {
         data.forEach((brewery: Brewery) => {
@@ -131,7 +130,6 @@ function renderListOfBrewery(){
             linkEl.append(aEl)
             liEl.append(h2El, typeEl, addressEl, phoneEl, linkEl)
             ulEl.append(liEl)
-            render()
         })
     })
     articleEl.append(ulEl)
