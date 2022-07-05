@@ -152,30 +152,35 @@ function getBreweriesForState () {
 
 
 function getBreweries() {
-        fetch('https://api.openbrewerydb.org/breweries')
-        .then(response => response.json())
-        .then(data => {
-            state.breweries = data
-            render()
-        })
+    fetch('https://api.openbrewerydb.org/breweries')
+    .then(response => response.json())
+    .then(data => {
+        state.breweries = data
+        render()
+      })
     }
 
+    function listenToSelectStateForm () {
+      let formEl = document.querySelector<HTMLFormElement>('#select-state-form')
+      formEl?.addEventListener('submit', function (event) {
+        event.preventDefault()
+        let USState = formEl['select-state'].value
+        state.USState = USState
+        getBreweriesForState()
+      })
+    }
+
+
 function render(){
-        document.body.innerHTML = ""
+  if(mainEl)
+    mainEl.innerHTML = ""
         
-        renderSearchBar()
-        renderListOfBrewery()
+    renderSearchBar()
+    renderListOfBrewery()
   }
 
-  function listenToSelectStateForm () {
-    let formEl = document.querySelector<HTMLFormElement>('#select-state-form')
-    formEl?.addEventListener('submit', function (event) {
-      event.preventDefault()
-      let USState = formEl['select-state'].value
-      state.USState = USState
-      getBreweriesForState()
-    })
-  }
+  
+  
     
     listenToSelectStateForm()
     render()
