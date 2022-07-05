@@ -46,6 +46,7 @@ const breweries: Brewery[] = [
 
 type State = {
   USState: string,
+  byName: string,
   breweries: Brewery[]
 }
 
@@ -56,7 +57,7 @@ let state: State = {
 
 let mainEl = document.querySelector('main')
 
-function renderSearchBar(){
+function renderSearchBar(breweries: Brewery){
 
         let h1El = document.createElement('h1')
         h1El.textContent = 'List of Breweries'
@@ -67,6 +68,12 @@ function renderSearchBar(){
         let searchForm = document.createElement('form')
         searchForm.id = 'search-breweries-form'
         searchForm.autocomplete = 'off'
+        searchForm.addEventListener('submit', function (event) {
+            event.preventDefault()
+            let breweryName = searchForm['search-state'].value
+            breweries.name = breweryName
+            render()
+        })
 
         let searchLabel = document.createElement('label')
         searchLabel.htmlFor = 'search-breweries'
@@ -82,6 +89,29 @@ function renderSearchBar(){
         mainEl?.append(h1El ,searchBarHeader)
 
 }
+
+function getBreweriesForName(){
+    // find breweries with this name
+    // put them in state
+    // rerender
+    let filteredBreweries = state.breweries.filter(brewery => {
+        return brewery.name === state.byName
+    })
+    state.breweries = filteredBreweries
+    render()
+  }
+
+  function listenToSelectNameForm(){
+    let searchForm = document.querySelector<HTMLFormElement>('search-breweries-form')
+    searchForm?.addEventListener('submit', function (event) {
+        event.preventDefault()
+        let breweryName = searchForm['search-state'].value
+        state.byName = breweryName
+        getBreweriesForName()
+    }
+    )
+}
+
 
 
 function renderListOfBrewery(){
@@ -103,28 +133,50 @@ function renderListOfBrewery(){
 
             let h2El = document.createElement('h2')
             h2El.textContent = brewery.name
+
+
             let typeEl = document.createElement('div')
-            typeEl.classList.add('type')
+            typeEl.className = 'type'
             typeEl.textContent = brewery.brewery_type
+
+
             let addressEl = document.createElement('section')
-            addressEl.classList.add('address')
+            addressEl.className = 'address'
+
+
             let h3El = document.createElement('h3')
             h3El.textContent = 'Address:'
+
+
             let pEl = document.createElement('p')
             pEl.textContent = brewery.street
+
+
             let p2El = document.createElement('p')
             p2El.textContent = `${brewery.city}, ${brewery.state} ${brewery.postal_code}`
+
+
             let phoneEl = document.createElement('section')
             phoneEl.classList.add('phone')
+
+
             let h3El2 = document.createElement('h3')
             h3El2.textContent = 'Phone:'
+
+
             let pEl2 = document.createElement('p')
             pEl2.textContent = brewery.phone
+
+
             let linkEl = document.createElement('section')
             linkEl.classList.add('link')
+
+
             let aEl = document.createElement('a')
             aEl.href = brewery.website_url
             aEl.textContent = 'Visit Website'
+
+            
             addressEl.append(h3El, pEl, p2El)
             phoneEl.append(h3El2, pEl2)
             linkEl.append(aEl)
@@ -138,17 +190,26 @@ function renderListOfBrewery(){
 
 
 
-function getBreweriesForState () {
+function getBreweriesForState() {
     // find breweries in this state
     // put them in state
     // rerender
-    let filteredBreweries= state.breweries.filter(brewery => {
+    let filteredBreweries = state.breweries.filter(brewery => {
         return brewery.state === state.USState
     })
     state.breweries = filteredBreweries
     render()
   }
 
+  function listenToSelectStateForm () {
+    let formEl = document.querySelector<HTMLFormElement>('#select-state-form')
+    formEl?.addEventListener('submit', function (event) {
+      event.preventDefault()
+      let USState = formEl['select-state'].value
+      state.USState = USState
+      getBreweriesForState()
+    })
+  }
 
 
 function getBreweries() {
@@ -160,15 +221,6 @@ function getBreweries() {
       })
     }
 
-    function listenToSelectStateForm () {
-      let formEl = document.querySelector<HTMLFormElement>('#select-state-form')
-      formEl?.addEventListener('submit', function (event) {
-        event.preventDefault()
-        let USState = formEl['select-state'].value
-        state.USState = USState
-        getBreweriesForState()
-      })
-    }
 
 
 function render(){
@@ -178,9 +230,6 @@ function render(){
     renderSearchBar()
     renderListOfBrewery()
   }
-
-  
-  
-    
-    listenToSelectStateForm()
-    render()
+listenToSelectNameForm()
+listenToSelectStateForm()
+render()
