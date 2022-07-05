@@ -44,6 +44,11 @@ const breweries: Brewery[] = [
     }
   ]
 
+type State = {
+  UsState: string,
+  breweries: Brewery[]
+}
+
 let state = {
         USState: '',
         breweries: []
@@ -90,7 +95,7 @@ function renderListOfBrewery(){
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(state.post)
+        body: JSON.stringify(state)
     }).then(response => response.json())
     .then(data => {
         data.forEach((brewery: Brewery) => {
