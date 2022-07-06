@@ -1,3 +1,5 @@
+
+
 // Write your code here
 type Brewery = {
   address_2: null;
@@ -45,12 +47,14 @@ const breweries: Brewery[] = [
 
 
 type State = {
+  byType: string;
   USState: string,
   byName: string,
   breweries: Brewery[]
 };
 
 let state: State = {
+  byType: "",
   byName: "",
   USState: "",
   breweries: [],
@@ -183,14 +187,13 @@ function getBreweries() {
     });
 }
 
-function getBreweriesForByType() {
-  // find breweries with this type
-  // put them in state
-  // rerender
-  let filteredBreweries = state.breweries.filter((brewery) => {
-    return brewery.brewery_type.toLowerCase() === `brewpub | micro | regional`.toLowerCase();
-  });
-  return filteredBreweries;
+function getBreweriesByType() {
+  fetch(`https://api.openbrewerydb.org/breweries?by_type=${state.byType}`)
+    .then((response) => response.json())
+    .then((data) => {
+      state.breweries = data;
+      render();
+    });
 }
 
 function renderBreweriesByType() {
@@ -215,17 +218,10 @@ function renderBreweriesByType() {
   let h2El = document.createElement("h2");
   h2El.textContent = "Filter By:";
 
-  for(let brewery of getBreweriesForByType()) {
-
   let formEl = document.createElement("form");
   formEl.id = "filter-by-type-form";
   formEl.autocomplete = "off";
-  formEl.addEventListener("submit", function (event) {
-    event.preventDefault();
-    brewery.brewery_type = formEl["filter-by-type"].value;
-    render();
-  });
-
+  
   let labelEl = document.createElement("label");
   labelEl.htmlFor = "filter-by-type";
 
@@ -235,6 +231,11 @@ function renderBreweriesByType() {
   let selectEl = document.createElement("select");
   selectEl.name = "filter-by-type";
   selectEl.id = "filter-by-type";
+  selectEl.addEventListener("change", function (event) {
+    event.preventDefault();
+    state.byType = selectEl.value;
+    getBreweriesByType();
+  })
 
   let optionEl = document.createElement("option");
   optionEl.value = "";
@@ -253,11 +254,11 @@ function renderBreweriesByType() {
   option4El.textContent = "Brewpub";
 
   selectEl.append(optionEl, option2El, option3El, option4El);
-  labelEl.append(h3El, selectEl);
-  formEl.append(labelEl);
+  labelEl.append(h3El);
+  formEl.append(labelEl, selectEl);
   asideEl.append(h2El, formEl);
   mainEl?.append(asideEl);
-}
+  console.log(mainEl)
 }
 
 function render() {
