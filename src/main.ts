@@ -43,13 +43,25 @@ const breweries: Brewery[] = [
   },
 ];
 
+type BreweryType = {
+  byMicro: string;
+  byReginal: string;
+  byBrewPub: string;
+};
+
 type State = {
+  byBreweryType: {};
   USState: string;
   byName: string;
   breweries: Brewery[];
 };
 
 let state: State = {
+  byBreweryType: {
+    byMicro: "",
+    byRegional: "",
+    byBrewPub: "",
+  },
   byName: "",
   USState: "",
   breweries: [],
@@ -70,7 +82,7 @@ function renderSearchBar() {
   searchForm.addEventListener("submit", function (event) {
     event.preventDefault();
     state.byName = searchForm["search-breweries"].value;
-    render()
+    render();
   });
 
   let searchLabel = document.createElement("label");
@@ -182,13 +194,88 @@ function getBreweries() {
     });
 }
 
-function render() {
-  if (mainEl) mainEl.innerHTML = "";
-  console.log(state)
-  renderSearchBar();
-  renderListOfBrewery();
+function getBreweriesForByMicro() {
+  // find breweries with this name
+  // put them in state
+  // rerender
+  let filteredBreweries = state.breweries.filter((brewery) => {
+    return brewery.brewery_type.toLowerCase() === "micro";
+  });
+  return filteredBreweries;
+}
+function renderBreweriesByMicro() {
+  // <aside class="filters-section">
+  // <h2>Filter By:</h2>
+  // <!-- Type of brewery - Challenge #1 -->
+  // <form id="filter-by-type-form" autocompete="off">
+  //   <label for="filter-by-type">
+  //     <h3>Type of Brewery</h3>
+  //   </label>
+  //   <select name="filter-by-type" id="filter-by-type">
+  //     <option value="">Select a type...</option>
+  //     <option value="micro">Micro</option>
+  //     <option value="regional">Regional</option>
+  //     <option value="brewpub">Brewpub</option>
+  //   </select>
+  // </form>
+
+  let asideEl = document.createElement("aside");
+  asideEl.className = "filters-section";
+
+  let h2El = document.createElement("h2");
+  h2El.textContent = "Filter By:";
+
+  let formEl = document.createElement("form");
+  formEl.id = "filter-by-type-form";
+  formEl.autocomplete = "off";
+  formEl.addEventListener("submit", function (event) {
+    event.preventDefault();
+    state.byBreweryType = formEl["filter-by-type"].value;
+    render();
+  });
+
+  let labelEl = document.createElement("label");
+  labelEl.htmlFor = "filter-by-type";
+
+  let h3El = document.createElement("h3");
+  h3El.textContent = "Type of Brewery";
+
+  let selectEl = document.createElement("select");
+  selectEl.name = "filter-by-type";
+  selectEl.id = "filter-by-type";
+
+  let optionEl = document.createElement("option");
+  optionEl.value = "";
+  optionEl.textContent = "Select a type...";
+
+  let option2El = document.createElement("option");
+  option2El.value = "micro";
+  option2El.textContent = "Micro";
+
+  let option3El = document.createElement("option");
+  option3El.value = "regional";
+  option3El.textContent = "Regional";
+
+  let option4El = document.createElement("option");
+  option4El.value = "brewpub";
+  option4El.textContent = "Brewpub";
+
+  selectEl.append(optionEl, option2El, option3El, option4El);
+  labelEl.append(h3El, selectEl);
+  formEl.append(labelEl);
+  asideEl.append(h2El, formEl);
+  mainEl?.append(asideEl);
 }
 
-getBreweries()
+function render() {
+  if (mainEl) mainEl.innerHTML = "";
+  console.log(state);
+  renderSearchBar();
+  renderListOfBrewery();
+  renderBreweriesByMicro();
+}
+
+
+getBreweries();
 listenToSelectStateForm();
 render();
