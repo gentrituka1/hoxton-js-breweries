@@ -2,7 +2,7 @@
 type Brewery = {
   address_2: null;
   address_3: null;
-  brewery_type: string;
+  brewery_type: string | 'brewpub | micro | regional';
   city: string;
   country: string;
   county_province: null;
@@ -43,25 +43,14 @@ const breweries: Brewery[] = [
   },
 ];
 
-type BreweryType = {
-  byMicro: string;
-  byReginal: string;
-  byBrewPub: string;
-};
 
 type State = {
-  byBreweryType: {};
-  USState: string;
-  byName: string;
-  breweries: Brewery[];
+  USState: string,
+  byName: string,
+  breweries: Brewery[]
 };
 
 let state: State = {
-  byBreweryType: {
-    byMicro: "",
-    byRegional: "",
-    byBrewPub: "",
-  },
   byName: "",
   USState: "",
   breweries: [],
@@ -194,16 +183,17 @@ function getBreweries() {
     });
 }
 
-function getBreweriesForByMicro() {
-  // find breweries with this name
+function getBreweriesForByType() {
+  // find breweries with this type
   // put them in state
   // rerender
   let filteredBreweries = state.breweries.filter((brewery) => {
-    return brewery.brewery_type.toLowerCase() === "micro";
+    return brewery.brewery_type.toLowerCase() === `brewpub | micro | regional`.toLowerCase();
   });
   return filteredBreweries;
 }
-function renderBreweriesByMicro() {
+
+function renderBreweriesByType() {
   // <aside class="filters-section">
   // <h2>Filter By:</h2>
   // <!-- Type of brewery - Challenge #1 -->
@@ -225,12 +215,14 @@ function renderBreweriesByMicro() {
   let h2El = document.createElement("h2");
   h2El.textContent = "Filter By:";
 
+  for(let brewery of getBreweriesForByType()) {
+
   let formEl = document.createElement("form");
   formEl.id = "filter-by-type-form";
   formEl.autocomplete = "off";
   formEl.addEventListener("submit", function (event) {
     event.preventDefault();
-    state.byBreweryType = formEl["filter-by-type"].value;
+    brewery.brewery_type = formEl["filter-by-type"].value;
     render();
   });
 
@@ -266,13 +258,14 @@ function renderBreweriesByMicro() {
   asideEl.append(h2El, formEl);
   mainEl?.append(asideEl);
 }
+}
 
 function render() {
   if (mainEl) mainEl.innerHTML = "";
   console.log(state);
+  renderBreweriesByType();
   renderSearchBar();
   renderListOfBrewery();
-  renderBreweriesByMicro();
 }
 
 
