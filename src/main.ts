@@ -51,13 +51,14 @@ type State = {
 }
 
 let state: State = {
+        byName: "",
         USState: '',
         breweries: []
     }
 
 let mainEl = document.querySelector('main')
 
-function renderSearchBar(breweries: Brewery){
+function renderSearchBar(){
 
         let h1El = document.createElement('h1')
         h1El.textContent = 'List of Breweries'
@@ -68,12 +69,7 @@ function renderSearchBar(breweries: Brewery){
         let searchForm = document.createElement('form')
         searchForm.id = 'search-breweries-form'
         searchForm.autocomplete = 'off'
-        searchForm.addEventListener('submit', function (event) {
-            event.preventDefault()
-            let breweryName = searchForm['search-state'].value
-            breweries.name = breweryName
-            render()
-        })
+        
 
         let searchLabel = document.createElement('label')
         searchLabel.htmlFor = 'search-breweries'
